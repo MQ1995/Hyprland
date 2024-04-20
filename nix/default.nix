@@ -79,9 +79,6 @@ assert lib.assertMsg (!hidpiXWayland) "The option `hidpiXWayland` has been remov
         then "dirty"
         else ""
       }'
-
-      # needed by CMake
-      mkdir -p $out/bin
     '';
 
     nativeBuildInputs = [

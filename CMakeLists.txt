@@ -274,8 +274,12 @@ add_subdirectory(hyprpm)
 # binary and symlink
 install(TARGETS Hyprland)
 
-ADD_CUSTOM_TARGET(hyprlandsymlink ALL
-                  COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_INSTALL_BINDIR}/Hyprland ${CMAKE_INSTALL_BINDIR}/hyprland)
+install(CODE "execute_process( \
+        COMMAND ${CMAKE_COMMAND} -E create_symlink \
+        ${CMAKE_INSTALL_BINDIR}/Hyprland \
+        ${CMAKE_INSTALL_BINDIR}/hyprland
+        )"
+)
 
 # session file
 install(FILES ${CMAKE_SOURCE_DIR}/example/hyprland.desktop
