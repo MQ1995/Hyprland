@@ -27,4 +27,6 @@ jobs:
           name: hyprland
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
+      - run: ls -lAh subprojects/udis86
+
       - run: nix build '.?submodules=1#${{ matrix.package }}' -L
