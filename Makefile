@@ -30,7 +30,7 @@ all:
 	$(MAKE) release
 
 install:
-	@echo -en "$(MAKE) release has been deprecated.\nYou can install Hyprland using $(MAKE) all\n"
+	@echo -en "$(MAKE) install has been deprecated.\nYou can install Hyprland using $(MAKE) all\n"
 	@exit 1
 
 uninstall:
@@ -41,9 +41,24 @@ pluginenv:
 	@echo -en "$(MAKE) pluginenv has been deprecated.\nPlease run $(MAKE) all && sudo $(MAKE) installheaders\n"
 	@exit 1
 	
-installheaders:
-	@echo -en "$(MAKE) installheaders has been deprecated.\nHeaders are now installed by default using CMake\n"
-	@exit 1
+installheader:
+	@if [ ! -f ./src/version.h ]; then echo -en "You need to run $(MAKE) all first.\n" && exit 1; fi
+	
+	rm -fr ${PREFIX}/include/hyprland
+	mkdir -p ${PREFIX}/include/hyprland
+	mkdir -p ${PREFIX}/include/hyprland/protocols
+	mkdir -p ${PREFIX}/include/hyprland/wlroots-hyprland
+	mkdir -p ${PREFIX}/share/pkgconfig
+
+	find src -name '*.h*' -print0 | cpio --quiet -0dump ${PREFIX}/include/hyprland
+	cd subprojects/wlroots-hyprland/include && find . -name '*.h*' -print0 | cpio --quiet -0dump ${PREFIX}/include/hyprland/wlroots-hyprland && cd ../../..
+	cd subprojects/wlroots-hyprland/build/include && find . -name '*.h*' -print0 | cpio --quiet -0dump ${PREFIX}/include/hyprland/wlroots-hyprland && cd ../../../..
+	cp ./protocols/*-protocol.h ${PREFIX}/include/hyprland/protocols
+	cp ./build/hyprland.pc ${PREFIX}/share/pkgconfig
+	if [ -d /usr/share/pkgconfig ]; then cp ./build/hyprland.pc /usr/share/pkgconfig 2>/dev/null || true; fi
+
+	chmod -R 755 ${PREFIX}/include/hyprland
+	chmod 755 ${PREFIX}/share/pkgconfigs
 
 man:
 	pandoc ./docs/Hyprland.1.rst \
